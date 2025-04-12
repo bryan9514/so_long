@@ -6,13 +6,13 @@
 #    By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/11 20:21:32 by brturcio          #+#    #+#              #
-#    Updated: 2025/04/11 20:31:59 by brturcio         ###   ########.fr        #
+#    Updated: 2025/04/12 08:50:23 by brturcio         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # ------------------ VARIABLES PRINCIPALES ------------------
 
-NAME		:= mylib42.a
+NAME		:= libft.a
 INCDIR		:= inc
 OBJDIR		:= obj
 
@@ -34,7 +34,7 @@ all: $(NAME)
 # Compilar librería
 $(NAME): $(OBJ)
 	@ar rcs $@ $^
-	@echo "✅ Librería creada: $(NAME)"
+	@echo "✅ Library created: $(NAME)"
 
 # Compilación de cada archivo .c en su .o en la carpeta obj/
 $(OBJDIR)/%.o: %.c
@@ -44,12 +44,12 @@ $(OBJDIR)/%.o: %.c
 # Limpiar objetos
 clean:
 	@rm -rf $(OBJDIR)
-	@echo "🧹 Carpeta obj/ eliminada."
+	@echo "🧹 clean done."
 
 # Limpiar objetos y la librería
 fclean: clean
 	@rm -f $(NAME)
-	@echo "🧽 $(NAME) eliminado."
+	@echo "🧽 fclean done."
 
 # Recomponer todo
 re: fclean all
