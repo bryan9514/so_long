@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: brturcio <brturcio@student.42.fr>          +#+  +:+       +#+        */
+/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 09:42:38 by brturcio          #+#    #+#             */
-/*   Updated: 2024/12/21 15:42:03 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:37:56 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*read_buff(int fd, char *data)
 
 	nb_buffer = 1;
 	if (data == NULL)
-		data = ft_strdup("");
+		data = ft_strdup_("");
 	while (nb_buffer > 0 && !ft_strrchr(data, '\n'))
 	{
 		buffer_data = malloc((BUFFER_SIZE + 1) * sizeof(char));
@@ -35,7 +35,7 @@ char	*read_buff(int fd, char *data)
 			break ;
 		}
 		buffer_data[nb_buffer] = '\0';
-		data = ft_strjoin(data, buffer_data);
+		data = ft_strjoin_free(data, buffer_data);
 		free(buffer_data);
 	}
 	return (data);
@@ -53,13 +53,13 @@ char	*extract_line(char **data)
 	if ((*data)[len] == '\n')
 	{
 		line = ft_substr(*data, 0, len + 1);
-		after_newline = ft_strdup(*data + len + 1);
+		after_newline = ft_strdup_(*data + len + 1);
 		free(*data);
 		*data = after_newline;
 	}
 	else
 	{
-		line = ft_strdup(*data);
+		line = ft_strdup_(*data);
 		free(*data);
 		*data = NULL;
 	}

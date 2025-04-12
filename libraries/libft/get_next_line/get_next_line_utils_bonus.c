@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: brturcio <brturcio@student.42.fr>          +#+  +:+       +#+        */
+/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 09:42:44 by brturcio          #+#    #+#             */
-/*   Updated: 2024/12/21 13:33:26 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:44:20 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin_free(char *s1, char *s2)
 {
 	size_t	i;
 	size_t	j;
@@ -66,7 +66,7 @@ char	*ft_strrchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*ft_strdup(char *s)
+char	*ft_strdup_(char *s)
 {
 	size_t	i;
 	char	*str;
@@ -97,7 +97,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	if (!s)
 		return (NULL);
 	if (start > (unsigned int)ft_strlen(s))
-		return (ft_strdup(""));
+		return (ft_strdup_(""));
 	j = ft_strlen(s + start);
 	if (j < len)
 		len = j;
