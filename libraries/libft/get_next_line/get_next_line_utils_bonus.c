@@ -6,21 +6,11 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 09:42:44 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/12 12:44:20 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/15 09:49:22 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
-
-size_t	ft_strlen(const char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	return (i);
-}
 
 char	*ft_strjoin_free(char *s1, char *s2)
 {

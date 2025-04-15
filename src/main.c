@@ -6,26 +6,38 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:55:14 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/12 16:57:25 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/15 11:06:16 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+void	free_all(char **map)
+{
+	int	i;
+
+	i = 0;
+	while (map[i])
+	{
+		free(map[i]);
+		i++;
+	}
+	free(map);
+}
 
 int		main(int ac, char **av)
 {
-	if (validate_all(ac , av) == 0)
-	{
-		perror("Error");
-		return (0);
-	}
-	ft_printf("paso validacion\n");
-	// void	*mlx_ptr;
+	char 	**map;
+	int	i = 0;
 
-	// mlx_ptr = mlx_init();
-	// if (!mlx_ptr)
-	// 	return (0);
-	// free(mlx_ptr);
+	validate_all(ac , av);
+	map = read_map(av[1]);
+	while (map[i])
+		ft_printf("%s", map[i++]);
+	// validate_map(map);
+	// init_game(map);
+
+	free_all(map);
+	ft_printf("\nfinal main\n");
 	return (0);
 }

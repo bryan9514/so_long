@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: brturcio <brturcio@student.42.fr>          +#+  +:+       +#+        */
+/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 09:54:24 by brturcio          #+#    #+#             */
-/*   Updated: 2024/11/09 11:44:03 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/15 11:20:05 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

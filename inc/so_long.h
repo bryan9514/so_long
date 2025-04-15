@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:56:11 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/12 16:43:31 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/15 10:49:30 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,18 @@
 #include "stdio.h"
 #include <fcntl.h> //open
 #include <unistd.h> // read and close
+
+# define PLAYER 'P'
+# define EXIT 'E'
+# define COLLEC 'C'
+# define WALL '1'
+# define EMPTY '0'
+
+# define INVALID_ARGUMENTS 1
+# define INVALID_FILE 2
+# define INVALID_EXTENSION 3
+# define INVALID_MAP 4
+# define MALLOC_FAILED 5
 
 
 
@@ -31,10 +43,12 @@
 # define WHITE   "\033[0;37m"
 # define RESET   "\033[0m"
 
-
-
 int		check_file_extension(char *filename);
 int		validate_all(int ac, char **av);
+//funtion printf the erros
+void	ft_print_error(int error);
+
+char	**read_map(char *av);
 
 #endif
 

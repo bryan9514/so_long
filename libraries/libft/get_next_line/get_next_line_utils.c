@@ -6,21 +6,12 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 18:44:45 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/12 12:44:04 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/15 09:47:36 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	return (i);
-}
 
 char	*ft_strjoin_free(char *s1, char *s2)
 {
