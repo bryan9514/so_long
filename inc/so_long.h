@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:56:11 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/15 10:49:30 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/18 14:57:06 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # define INVALID_EXTENSION 3
 # define INVALID_MAP 4
 # define MALLOC_FAILED 5
+# define EMPTY_MAP 6
 
 
 
@@ -44,11 +45,19 @@
 # define RESET   "\033[0m"
 
 int		check_file_extension(char *filename);
-int		validate_all(int ac, char **av);
+int		check_args(int ac, char **av);
 //funtion printf the erros
 void	ft_print_error(int error);
 
 char	**read_map(char *av);
+
+
+//validation size map
+int		validate_size_lines_map(char **map);
+
+//free
+void	free_list(t_list *lines);
+void	free_map(char **map);
 
 #endif
 

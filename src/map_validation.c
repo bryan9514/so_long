@@ -1,37 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   map_validation.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/03 15:55:14 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/18 14:57:28 by brturcio         ###   ########.fr       */
+/*   Created: 2025/04/18 10:00:17 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/18 14:34:03 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-
-
-int		main(int ac, char **av)
+int		validate_size_lines_map(char **map)
 {
-	char 	**map;
-	int	i = 0;
+	int	i;
+	size_t	line_refe;
 
-	check_args(ac , av);
-	map = read_map(av[1]);
-	if(!validate_size_lines_map(map))
-		ft_printf("Size no valid\n");
-	// validate_map(map);
-	// init_game(map);
-
+	if (!map || !map[0])
+		return (0);
+	i = 1;
+	line_refe = ft_strlen(map[0]);
 	while(map[i])
 	{
-		ft_printf("%s\n", map[i]);
+		if (ft_strlen(map[i]) != line_refe)
+			return (0);
 		i++;
 	}
-	free_map(map);
-	ft_printf("\nfinal main\n");
-	return (0);
+	return (1);
 }
+
+int		validate_map_not_empty(char **map)
+{
+	if (!map || !map[0] || map[0][0] == '\0')
+		return (0);
+	return (1);
+}
+

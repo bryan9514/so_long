@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   check_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/08 20:22:09 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/15 11:55:10 by brturcio         ###   ########.fr       */
+/*   Created: 2025/04/18 14:59:51 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/18 15:00:58 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,33 +19,14 @@ int		check_file_extension(char *filename)
 	len = ft_strlen(filename);
 	if (len < 4)
 		return (0);
-	return (ft_strncmp(filename + len - 4, ".ber", len));
+	return (ft_strncmp(filename + len - 4, ".ber", 4));
 }
 
-int		validate_all(int ac, char **av)
+int		check_args(int ac, char **av)
 {
 	if (ac != 2)
 		ft_print_error(INVALID_ARGUMENTS);
 	if (check_file_extension(av[1]))
 		ft_print_error(INVALID_EXTENSION);
-
 	return (1);
-}
-
-void	validate_size_map(char	**map)
-{
-	int	i;
-	int	j;
-	int	colum_size;
-	int	file_size;
-
-	i = 0;
-	j = 0;
-	while (map[i])
-	{
-		while (map[i][j])
-			j++;
-		i++;
-	}
-	file_size = i;
 }

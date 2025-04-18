@@ -1,37 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/03 15:55:14 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/18 14:57:28 by brturcio         ###   ########.fr       */
+/*   Created: 2025/04/18 11:47:01 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/18 11:47:47 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-
-
-int		main(int ac, char **av)
+void	free_list(t_list *lines)
 {
-	char 	**map;
-	int	i = 0;
+	t_list	*tmp;
 
-	check_args(ac , av);
-	map = read_map(av[1]);
-	if(!validate_size_lines_map(map))
-		ft_printf("Size no valid\n");
-	// validate_map(map);
-	// init_game(map);
-
-	while(map[i])
+	while (lines)
 	{
-		ft_printf("%s\n", map[i]);
+		tmp = lines->next;
+		free(lines);
+		lines = tmp;
+	}
+}
+
+void	free_map(char **map)
+{
+	int	i;
+
+	i = 0;
+	while (map[i])
+	{
+		free(map[i]);
 		i++;
 	}
-	free_map(map);
-	ft_printf("\nfinal main\n");
-	return (0);
+	free(map);
 }
