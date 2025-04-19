@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 14:59:51 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/18 15:00:58 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/19 16:28:35 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,15 @@ int		check_file_extension(char *filename)
 
 	len = ft_strlen(filename);
 	if (len < 4)
-		return (0);
+		return (1);
 	return (ft_strncmp(filename + len - 4, ".ber", 4));
 }
 
 int		check_args(int ac, char **av)
 {
 	if (ac != 2)
-		ft_print_error(INVALID_ARGUMENTS);
+		free_map_print_error(NULL, NULL, NULL, "Syntax : ./so_long  map_name.ber");
 	if (check_file_extension(av[1]))
-		ft_print_error(INVALID_EXTENSION);
+		free_map_print_error(NULL, NULL, NULL, "No valid extension map");
 	return (1);
 }

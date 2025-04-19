@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 09:19:38 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/18 14:31:32 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:03:39 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,27 @@ int	open_map_file(char *filename)
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		ft_print_error(INVALID_FILE);
+		free_map_print_error(NULL, NULL, NULL, "File does not exist");
 	return (fd);
 }
 
 t_list	*read_lines_into_list(int fd)
 {
 	t_list	*lines = NULL;
+	t_list	*new_node = NULL;
 	char	*line = NULL;
 	char	*clean_line = NULL;
 
 	while ((line = get_next_line(fd)))
 	{
-		clean_line = ft_strtrim(line, "\n");
+		clean_line = ft_strtrim(line, "\r\n");
 		free(line);
-		ft_lstadd_back(&lines, ft_lstnew(clean_line));
+		if (!clean_line)
+			free_map_print_error(NULL, lines, NULL, "ft_strtrim failed");
+		new_node = ft_lstnew(clean_line);
+		if (!new_node)
+			free_map_print_error(NULL, lines, clean_line, "ft_lstnew failed");
+		ft_lstadd_back(&lines, new_node);
 	}
 	close(fd);
 	return (lines);
@@ -48,7 +54,7 @@ char	**convert_list_to_array(t_list *lines)
 	map_size = ft_lstsize(lines);
 	map = malloc(sizeof(char *) * (map_size + 1));
 	if (!map)
-		ft_print_error(MALLOC_FAILED);
+		free_map_print_error(NULL, NULL, NULL, "Failed malloc");
 	tmp = lines;
 	i = 0;
 	while (tmp)
@@ -59,6 +65,12 @@ char	**convert_list_to_array(t_list *lines)
 	map[i] = NULL;
 	free_list(lines);
 	return (map);
+}
+int		validate_map_not_empty(char **map)
+{
+	if (!map || !map[0] || map[0][0] == '\0')
+		return (0);
+	return (1);
 }
 
 char	**read_map(char *av)
@@ -71,7 +83,7 @@ char	**read_map(char *av)
 	lines = read_lines_into_list(fd);
 	map = convert_list_to_array(lines);
 	if (!validate_map_not_empty(map))
-		ft_print_error(EMPTY_MAP);
+		free_map_print_error(map, NULL, NULL, "Empty map");
 	return (map);
 }
 

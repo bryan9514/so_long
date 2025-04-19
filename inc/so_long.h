@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:56:11 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/18 14:57:06 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/19 15:58:55 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,14 @@
 #include <fcntl.h> //open
 #include <unistd.h> // read and close
 
+//Code the elements
 # define PLAYER 'P'
 # define EXIT 'E'
 # define COLLEC 'C'
 # define WALL '1'
 # define EMPTY '0'
 
-# define INVALID_ARGUMENTS 1
-# define INVALID_FILE 2
-# define INVALID_EXTENSION 3
-# define INVALID_MAP 4
-# define MALLOC_FAILED 5
-# define EMPTY_MAP 6
-
-
-
+//Colors
 # define BLACK   "\033[0;30m"
 # define RED     "\033[0;31m"
 # define GREEN   "\033[0;32m"
@@ -44,20 +37,28 @@
 # define WHITE   "\033[0;37m"
 # define RESET   "\033[0m"
 
+
+//chrck_args.c
 int		check_file_extension(char *filename);
 int		check_args(int ac, char **av);
-//funtion printf the erros
+
+//free.c
+void	free_list(t_list *lines);
+void	free_map_print_error(char **map, t_list *lines, char *line, char *msj);
+
+//map_validation.c
+int		validate_size_lines_map(char **map);
+int		validate_elements_map(char **map);
+
+//print_error.c
 void	ft_print_error(int error);
 
+//read_map.c
+int		open_map_file(char *filename);
+t_list	*read_lines_into_list(int fd);
+char	**convert_list_to_array(t_list *lines);
+int		validate_map_not_empty(char **map);
 char	**read_map(char *av);
-
-
-//validation size map
-int		validate_size_lines_map(char **map);
-
-//free
-void	free_list(t_list *lines);
-void	free_map(char **map);
 
 #endif
 
