@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:00:17 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/19 16:56:14 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:07:23 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	check_valid_chars(char **map)
 		{
 			if (map[i][j] != '1' && map[i][j] != '0' && map[i][j] != 'C' && \
 				map[i][j] != 'P' && map[i][j] != 'E')
-					return (0);
+				return (0);
 			j++;
 		}
 		i++;
@@ -80,13 +80,52 @@ int	check_valid_chars(char **map)
 	return (1);
 }
 
+void	check_required_elements(char **map, int *c, int *p, int *e)
+{
+	int	i;
+	int	j;
 
+	i = 0;
+	while (map[i])
+	{
+		j = 0;
+		while (map[i][j])
+		{
+			if (map[i][j] == 'C')
+				(*c)++;
+			if (map[i][j] == 'P')
+				(*p)++;
+			if (map[i][j] == 'E')
+				(*e)++;
+			j++;
+		}
+		i++;
+	}
+}
 
 int	validate_elements_map(char **map)
 {
+	int	count_c;
+	int	count_p;
+	int	count_e;
+
+	count_c = 0;
+	count_p = 0;
+	count_e = 0;
 	if (!validate_wall_map(map))
 		free_map_print_error(map, NULL, NULL, "Invalid wall");
 	if (!check_valid_chars(map))
 		free_map_print_error(map, NULL, NULL, "Invalid characters");
+	check_required_elements(map, &count_c, &count_p, &count_e);
+	if (count_p < 1)
+		free_map_print_error(map, NULL, NULL, "Missing player");
+	if (count_p > 1)
+		free_map_print_error(map, NULL, NULL, "Too many players");
+	if (count_e < 1)
+		free_map_print_error(map, NULL, NULL, "Missing exit");
+	if (count_e > 1)
+		free_map_print_error(map, NULL, NULL, "Too many exits");
+	if (count_c < 1)
+		free_map_print_error(map, NULL, NULL, "Missing collectible");
 	return (1);
 }
