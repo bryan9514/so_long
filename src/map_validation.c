@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:00:17 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/19 18:07:23 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/19 19:28:25 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,5 +127,7 @@ int	validate_elements_map(char **map)
 		free_map_print_error(map, NULL, NULL, "Too many exits");
 	if (count_c < 1)
 		free_map_print_error(map, NULL, NULL, "Missing collectible");
+	if (!verify_path(map))
+		free_map_print_error(map, NULL, NULL, "Unreachable elements");
 	return (1);
 }
