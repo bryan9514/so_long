@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:56:11 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/19 15:58:55 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/20 11:11:08 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include "MLX42/MLX42.h"
 #include "libft.h"
-#include "stdio.h"
 #include <fcntl.h> //open
 #include <unistd.h> // read and close
 
@@ -37,6 +36,11 @@
 # define WHITE   "\033[0;37m"
 # define RESET   "\033[0m"
 
+typedef struct s_game
+{
+	mlx_t	*mlx;
+	char	**map;
+} t_game;
 
 //chrck_args.c
 int		check_file_extension(char *filename);
@@ -44,14 +48,18 @@ int		check_args(int ac, char **av);
 
 //free.c
 void	free_list(t_list *lines);
+void	free_map(char **map);
 void	free_map_print_error(char **map, t_list *lines, char *line, char *msj);
+
+//init_game
+int init_game(char **map);
+
+//map.path.c
+int verify_path(char **map);
 
 //map_validation.c
 int		validate_size_lines_map(char **map);
 int		validate_elements_map(char **map);
-
-//print_error.c
-void	ft_print_error(int error);
 
 //read_map.c
 int		open_map_file(char *filename);

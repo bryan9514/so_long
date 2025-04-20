@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 11:47:01 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/19 15:57:45 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/20 12:53:28 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,25 +23,27 @@ void	free_list(t_list *lines)
 		lines = tmp;
 	}
 }
-
-void	free_map_print_error(char **map, t_list *lines, char *line, char *msj)
+void	free_map(char **map)
 {
 	int	i;
 
 	i = 0;
+	while (map[i])
+	{
+		free(map[i]);
+		i++;
+	}
+	free(map);
+}
+
+void	free_map_print_error(char **map, t_list *lines, char *line, char *msj)
+{
 	if (lines)
 		free_list(lines);
 	if (line)
 		free(line);
 	if (map)
-	{
-		while (map[i])
-		{
-			free(map[i]);
-			i++;
-		}
-		free(map);
-	}
+		free_map(map);
 	if (msj)
 		ft_printf(YELLOW"%s\n"RESET, msj);
 	exit(1);
