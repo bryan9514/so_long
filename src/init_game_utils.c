@@ -1,28 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   init_game_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/03 15:55:14 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/20 20:00:29 by brturcio         ###   ########.fr       */
+/*   Created: 2025/04/20 21:07:26 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/20 21:13:20 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-int		main(int ac, char **av)
+void	window_size(t_game *game, char **map)
 {
-	char 	**map;
+	int	i;
 
-	check_args(ac , av);
-	map = read_map(av[1]);
-	if (!validate_size_lines_map(map))
-		free_map_print_error(map, NULL, NULL, "Invalid size map");
-	validate_elements_map(map);
-	if (!init_game(map))
-		free_map_print_error(map, NULL, NULL, "Error initializing game");
-	// free_map_print_error(map, NULL, NULL, "Game termined");
-	return (0);
+	i = 0;
+	game->width = (ft_strlen(map[0]) * TILE_SIZE);
+	while (map[i])
+		i++;
+	game->height = (i * TILE_SIZE);
+}
+
+int	init_window(t_game *game)
+{
+	game->mlx = mlx_init(game->width, game->height, "so_long", false);
+	if (!game->mlx)
+		return (0);
+	mlx_close_hook(game->mlx, close_hook, game);
+	return (1);
 }

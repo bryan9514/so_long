@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:56:11 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/20 11:11:08 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/20 20:35:46 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,30 @@
 # define WHITE   "\033[0;37m"
 # define RESET   "\033[0m"
 
+# define TILE_SIZE 32
 typedef struct s_game
 {
-	mlx_t	*mlx;
-	char	**map;
-} t_game;
+	void	*mlx;        // puntero de conexión MiniLibX
+	void	*win;        // puntero de la ventana
+	char	**map;       // mapa leído (char **)
+	int		width;      // ancho del mapa en tiles
+	int		height;     // alto del mapa en tiles
+
+	int		player_x;   // posición X del jugador
+	int		player_y;   // posición Y del jugador
+	int		coins;      // número total de coleccionables
+	int		collected;  // número de coleccionables recogidos
+	int		moves;      // contador de movimientos
+
+	// sprites (imágenes)
+	void	*img_wall;
+	void	*img_floor;
+	void	*img_player;
+	void	*img_exit;
+	void	*img_coin;
+
+}	t_game;
+
 
 //chrck_args.c
 int		check_file_extension(char *filename);
