@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:55:14 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/20 20:00:29 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:49:17 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,9 @@ int		main(int ac, char **av)
 	check_args(ac , av);
 	map = read_map(av[1]);
 	if (!validate_size_lines_map(map))
-		free_map_print_error(map, NULL, NULL, "Invalid size map");
+		free_map_print_error(map, NULL, NULL, "Error : Invalid size map");
 	validate_elements_map(map);
 	if (!init_game(map))
-		free_map_print_error(map, NULL, NULL, "Error initializing game");
-	// free_map_print_error(map, NULL, NULL, "Game termined");
+		free_map_print_error(map, NULL, NULL, "Error : initializing game");
 	return (0);
 }

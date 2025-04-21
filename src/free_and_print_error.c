@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 11:47:01 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/20 12:53:28 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/21 10:39:12 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,10 @@ void	free_map_print_error(char **map, t_list *lines, char *line, char *msj)
 	if (map)
 		free_map(map);
 	if (msj)
-		ft_printf(YELLOW"%s\n"RESET, msj);
+	{
+		ft_putstr_fd(RED, 2);
+		ft_putstr_fd(msj, 2);
+		ft_putstr_fd(RESET"\n", 2);
+	}
 	exit(1);
 }

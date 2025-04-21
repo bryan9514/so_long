@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:00:17 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/19 19:28:25 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:47:48 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,21 +113,21 @@ int	validate_elements_map(char **map)
 	count_p = 0;
 	count_e = 0;
 	if (!validate_wall_map(map))
-		free_map_print_error(map, NULL, NULL, "Invalid wall");
+		free_map_print_error(map, NULL, NULL, "Error : Invalid wall");
 	if (!check_valid_chars(map))
-		free_map_print_error(map, NULL, NULL, "Invalid characters");
+		free_map_print_error(map, NULL, NULL, "Error : Invalid characters");
 	check_required_elements(map, &count_c, &count_p, &count_e);
 	if (count_p < 1)
-		free_map_print_error(map, NULL, NULL, "Missing player");
+		free_map_print_error(map, NULL, NULL, "Error : Missing player");
 	if (count_p > 1)
-		free_map_print_error(map, NULL, NULL, "Too many players");
+		free_map_print_error(map, NULL, NULL, "Error : Too many players");
 	if (count_e < 1)
-		free_map_print_error(map, NULL, NULL, "Missing exit");
+		free_map_print_error(map, NULL, NULL, "Error : Missing exit");
 	if (count_e > 1)
-		free_map_print_error(map, NULL, NULL, "Too many exits");
+		free_map_print_error(map, NULL, NULL, "Error : Too many exits");
 	if (count_c < 1)
-		free_map_print_error(map, NULL, NULL, "Missing collectible");
+		free_map_print_error(map, NULL, NULL, "Erro : Missing collectible");
 	if (!verify_path(map))
-		free_map_print_error(map, NULL, NULL, "Unreachable elements");
+		free_map_print_error(map, NULL, NULL, "Error : Unreachable elements");
 	return (1);
 }
