@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 07:22:49 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/21 16:52:44 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/21 17:30:04 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	close_hook(void *param)
 int	init_window(t_game *game)
 {
 	mlx_set_setting(MLX_STRETCH_IMAGE, true);
-	game->mlx = mlx_init(game->width, game->height, "so_long", false);
+	game->mlx = mlx_init(game->width, game->height, "so_long", true);
 	if (!game->mlx)
 		return (0);
 	mlx_close_hook(game->mlx, close_hook, game);
