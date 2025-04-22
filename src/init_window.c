@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 07:22:49 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/21 17:30:04 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/22 21:18:06 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 void	close_hook(void *param)
 {
-	t_game *game = (t_game *)param;
-	free_map(game->map);
-	mlx_close_window(game->mlx);
+	t_game	*game;
+
+	game = (t_game *)param;
+	end_game(game);
 }
 
 int	init_window(t_game *game)
@@ -28,14 +29,16 @@ int	init_window(t_game *game)
 	mlx_close_hook(game->mlx, close_hook, game);
 	return (1);
 }
+
 void	end_game(t_game *game)
 {
+	free_image(game);
 	if (game->map)
 		free_map(game->map);
-
 	if (game->mlx)
 		mlx_close_window(game->mlx);
 	mlx_terminate(game->mlx);
 	ft_printf("Game closed\n");
+	free(game);
 	exit(0);
 }

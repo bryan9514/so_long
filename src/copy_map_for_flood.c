@@ -6,18 +6,19 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 19:27:05 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/21 07:18:44 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:11:18 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-char **copy_map(char **map)
+char	**copy_map(char **map)
 {
 	int		i;
-	char	**map_copy = NULL;
+	char	**map_copy;
 
 	i = 0;
+	map_copy = NULL;
 	while (map[i])
 		i++;
 	map_copy = malloc(sizeof(char *) * (i + 1));
@@ -40,22 +41,19 @@ char **copy_map(char **map)
 	return (map_copy);
 }
 
-void flood_fill(char **map, int x, int y)
+void	flood_fill(char **map, int x, int y)
 {
 	if (y < 0 || x < 0 || map[y] == NULL || map[y][x] == '\0')
-		return;
+		return ;
 	if (map[y][x] == '1' || map[y][x] == 'F')
-		return;
-
-	// Marcamos como visitado con 'F'
+		return ;
 	map[y][x] = 'F';
-
-	// Recorrer en las 4 direcciones: arriba, abajo, izquierda, derecha
 	flood_fill(map, x + 1, y);
 	flood_fill(map, x - 1, y);
 	flood_fill(map, x, y + 1);
 	flood_fill(map, x, y - 1);
 }
+
 int	find_player(char **map, int *player_x, int *player_y)
 {
 	int	i;
@@ -100,12 +98,13 @@ int	has_remainig(char **map, char character)
 	return (0);
 }
 
-int verify_path(char **map)
+int	verify_path(char **map)
 {
 	int		player_x;
 	int		player_y;
-	char	**map_copy = NULL;
+	char	**map_copy;
 
+	map_copy = NULL;
 	if (!find_player(map, &player_x, &player_y))
 		free_map_print_error(map, NULL, NULL, "player not found");
 	map_copy = copy_map(map);
@@ -114,8 +113,8 @@ int verify_path(char **map)
 	flood_fill(map_copy, player_x, player_y);
 	if (has_remainig(map_copy, 'C') || has_remainig(map_copy, 'E'))
 	{
-			free_map(map_copy);
-			return (0);
+		free_map(map_copy);
+		return (0);
 	}
 	free_map(map_copy);
 	return (1);

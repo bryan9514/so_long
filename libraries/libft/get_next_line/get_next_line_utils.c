@@ -6,12 +6,11 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 18:44:45 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/15 09:47:36 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:26:57 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
 
 char	*ft_strjoin_free(char *s1, char *s2)
 {

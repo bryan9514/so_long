@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 11:42:43 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/21 16:02:52 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/22 20:51:36 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,13 @@ int	verify_end(t_game *game, char dest)
 
 void	move_player(t_game *game, int dx, int dy)
 {
-	int	new_y;
-	int	new_x;
+	int		new_y;
+	int		new_x;
 	char	dest;
 
 	new_y = game->player_y + dy;
 	new_x = game->player_x + dx;
 	dest = game->map[new_y][new_x];
-
 	if (dest == '1')
 		return ;
 	if (dest == 'C')

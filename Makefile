@@ -6,7 +6,7 @@
 #    By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/03 15:57:57 by brturcio          #+#    #+#              #
-#    Updated: 2025/04/15 10:56:35 by brturcio         ###   ########.fr        #
+#    Updated: 2025/04/22 16:42:56 by brturcio         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,6 @@ $(MLX42_LIB):
 		$(MAKE) -s -C $(MLX42_DIR)/build -j4 > /dev/null 2>&1; \
 		echo "✅ Library created : MLX42";\
 	fi
-
 
 clean:
 	@rm -rf $(OBJ_DIR)

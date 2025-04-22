@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 11:51:36 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/15 10:45:18 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:25:56 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 # define LIBFT_H
 # include <stdlib.h>
 # include <unistd.h>
-#include "ft_printf.h"
-#include "get_next_line.h"
-#include "get_next_line_bonus.h"
+# include "ft_printf.h"
+# include "get_next_line.h"
+# include "get_next_line_bonus.h"
 
 typedef struct s_list
 {
