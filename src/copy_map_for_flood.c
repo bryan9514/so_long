@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 19:27:05 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/22 17:11:18 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/23 16:20:52 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	flood_fill(char **map, int x, int y)
 {
 	if (y < 0 || x < 0 || map[y] == NULL || map[y][x] == '\0')
 		return ;
-	if (map[y][x] == '1' || map[y][x] == 'F')
+	if (map[y][x] == '1' || map[y][x] == 'F' || map[y][x] == 'E')
 		return ;
 	map[y][x] = 'F';
 	flood_fill(map, x + 1, y);
@@ -111,7 +111,7 @@ int	verify_path(char **map)
 	if (!map_copy)
 		free_map_print_error(map, NULL, NULL, "copy_map failed");
 	flood_fill(map_copy, player_x, player_y);
-	if (has_remainig(map_copy, 'C') || has_remainig(map_copy, 'E'))
+	if (has_remainig(map_copy, 'C'))
 	{
 		free_map(map_copy);
 		return (0);

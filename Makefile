@@ -6,7 +6,7 @@
 #    By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/03 15:57:57 by brturcio          #+#    #+#              #
-#    Updated: 2025/04/22 16:42:56 by brturcio         ###   ########.fr        #
+#    Updated: 2025/04/23 20:06:16 by brturcio         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 $(NAME): $(OBJ)
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBS) $(MLX_FLAGS) -o $@
-	@echo "✅ Compilation compiled: $(NAME)"
+	@echo "✅ Compilation completed: $(NAME)"
 
 $(LIBFT):
 	@if [ ! -f $@ ]; then \

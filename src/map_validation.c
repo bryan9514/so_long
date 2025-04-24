@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:00:17 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/22 16:07:32 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/23 17:55:13 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,10 @@ int	validate_size_lines_map(char **map)
 			return (0);
 		i++;
 	}
+	if (line_refe > 49)
+		return (0);
+	if (i > 50)
+		return (0);
 	return (1);
 }
 

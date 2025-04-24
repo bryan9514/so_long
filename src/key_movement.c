@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 11:42:43 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/22 20:51:36 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/23 20:22:55 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ void	move_player(t_game *game, int dx, int dy)
 	mlx_image_to_window(game->mlx, game->img_floor, game->player_x * \
 		TILE_SIZE, game->player_y * TILE_SIZE);
 	mlx_image_to_window(game->mlx, game->img_player, new_x * \
-			TILE_SIZE, new_y * TILE_SIZE);
+		TILE_SIZE, new_y * TILE_SIZE);
 	game->player_x = new_x;
 	game->player_y = new_y;
 	game->moves++;
-	ft_printf("movements : %d\n", game->moves);
+	ft_printf(CYAN"movements : %d\n"RESET, game->moves);
 }
 
 void	my_keyhook(mlx_key_data_t keydata, void *param)

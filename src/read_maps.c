@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 09:19:38 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/22 15:36:38 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/23 18:42:52 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	validate_map_not_empty(char **map)
 	return (1);
 }
 
-char	**read_map(char *av)
+char	**read_map(char *av, t_game *game)
 {
 	int		fd;
 	t_list	*lines;
@@ -85,6 +85,7 @@ char	**read_map(char *av)
 
 	fd = open_map_file(av);
 	lines = read_lines_into_list(fd);
+	game->fd = fd;
 	map = convert_list_to_array(lines);
 	if (!validate_map_not_empty(map))
 		free_map_print_error(map, NULL, NULL, "Empty map");

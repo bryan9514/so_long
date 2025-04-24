@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:56:11 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/22 21:12:11 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/23 17:41:33 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_game
 {
 	void		*mlx;
 	char		**map;
+	int			fd;
 	int			width;
 	int			height;
 	int			map_rows;
@@ -84,7 +85,7 @@ void			window_size(t_game *game, char **map);
 int				count_collec(char **map);
 
 //init_game
-int				init_game(char **map);
+int				init_game(char **map, t_game *game);
 
 //init_window
 void			close_hook(void *param);
@@ -113,7 +114,7 @@ int				open_map_file(char *filename);
 t_list			*read_lines_into_list(int fd);
 char			**convert_list_to_array(t_list *lines);
 int				validate_map_not_empty(char **map);
-char			**read_map(char *av);
+char			**read_map(char *av, t_game *game);
 
 //render_map.c
 void			render_map2(t_game *game, char cel, int x, int y);
