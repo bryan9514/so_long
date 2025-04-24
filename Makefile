@@ -12,7 +12,7 @@
 
 NAME		:= so_long
 CC			:= cc
-CFLAGS		:= -g -Wall -Wextra -Werror
+CFLAGS		:= -Wall -Wextra -Werror
 
 SRC_DIR		:= src
 OBJ_DIR		:= obj
