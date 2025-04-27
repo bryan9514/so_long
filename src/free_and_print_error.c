@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 11:47:01 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/23 17:13:10 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 10:11:59 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,27 @@ void	free_map(char **map)
 		i++;
 	}
 	free(map);
+	map = NULL;
+}
+
+void	free_list2(t_list *list, char *msj)
+{
+	t_list	*tmp;
+
+	while (list)
+	{
+		tmp = list->next;
+		free(list->content);
+		free(list);
+		list = tmp;
+	}
+	if (msj)
+	{
+		ft_putstr_fd(RED, 2);
+		ft_putstr_fd(msj, 2);
+		ft_putstr_fd(RESET"\n", 2);
+	}
+	exit(1);
 }
 
 void	free_image(t_game *game)

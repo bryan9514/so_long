@@ -6,13 +6,13 @@
 #    By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/03 15:57:57 by brturcio          #+#    #+#              #
-#    Updated: 2025/04/24 08:22:39 by brturcio         ###   ########.fr        #
+#    Updated: 2025/04/25 15:17:19 by brturcio         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		:= so_long
 CC			:= cc
-CFLAGS		:= -Wall -Wextra -Werror
+CFLAGS		:= -Wall -Wextra -Werror 
 
 SRC_DIR		:= src
 OBJ_DIR		:= obj

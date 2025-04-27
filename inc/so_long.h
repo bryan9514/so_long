@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:56:11 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/23 17:41:33 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 10:15:24 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,23 +42,24 @@
 
 typedef struct s_game
 {
-	void		*mlx;
-	char		**map;
-	int			fd;
-	int			width;
-	int			height;
-	int			map_rows;
-	int			map_cols;
-	int			player_x;
-	int			player_y;
-	int			coins;
-	int			collected;
-	int			moves;
-	mlx_image_t	*img_wall;
-	mlx_image_t	*img_floor;
-	mlx_image_t	*img_player;
-	mlx_image_t	*img_door;
-	mlx_image_t	*img_collec;
+	mlx_t			*mlx;
+	char			**map;
+	int				width;
+	int				height;
+	int				map_rows;
+	int				map_cols;
+	int				player_x;
+	int				player_y;
+	int				coins;
+	int				collected;
+	int				moves;
+	mlx_image_t		*img_wall;
+	mlx_image_t		*img_floor;
+	mlx_image_t		*img_player;
+	mlx_image_t		*img_door;
+	mlx_image_t		*img_collec;
+	mlx_texture_t	*texture;
+	mlx_image_t		*image;
 
 }	t_game;
 
@@ -76,6 +77,7 @@ int				verify_path(char **map);
 //free.c
 void			free_list(t_list *lines);
 void			free_map(char **map);
+void			free_list2(t_list *list, char *msj);
 void			free_map_print_error(char **map, t_list *lines, char *line, \
 				char *msj);
 void			free_image(t_game *game);
@@ -114,7 +116,7 @@ int				open_map_file(char *filename);
 t_list			*read_lines_into_list(int fd);
 char			**convert_list_to_array(t_list *lines);
 int				validate_map_not_empty(char **map);
-char			**read_map(char *av, t_game *game);
+char			**read_map(char *av);
 
 //render_map.c
 void			render_map2(t_game *game, char cel, int x, int y);

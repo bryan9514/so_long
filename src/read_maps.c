@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 09:19:38 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/23 18:42:52 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 10:09:14 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ t_list	*read_lines_into_list(int fd)
 		clean_line = ft_strtrim(line, "\r\n");
 		free(line);
 		if (!clean_line)
-			free_map_print_error(NULL, lines, NULL, "ft_strtrim failed");
+			free_list2(lines, "ft_strtrim failed");
 		new_node = ft_lstnew(clean_line);
 		if (!new_node)
-			free_map_print_error(NULL, lines, clean_line, "ft_lstnew failed");
+			free_list2(lines, "ft_lstnew failed");
 		ft_lstadd_back(&lines, new_node);
 		line = get_next_line(fd);
 	}
@@ -57,7 +57,7 @@ char	**convert_list_to_array(t_list *lines)
 	map_size = ft_lstsize(lines);
 	map = malloc(sizeof(char *) * (map_size + 1));
 	if (!map)
-		free_map_print_error(NULL, NULL, NULL, "Failed malloc");
+		free_list2(lines, "Failed malloc");
 	tmp = lines;
 	i = 0;
 	while (tmp)
@@ -77,7 +77,7 @@ int	validate_map_not_empty(char **map)
 	return (1);
 }
 
-char	**read_map(char *av, t_game *game)
+char	**read_map(char *av)
 {
 	int		fd;
 	t_list	*lines;
@@ -85,7 +85,6 @@ char	**read_map(char *av, t_game *game)
 
 	fd = open_map_file(av);
 	lines = read_lines_into_list(fd);
-	game->fd = fd;
 	map = convert_list_to_array(lines);
 	if (!validate_map_not_empty(map))
 		free_map_print_error(map, NULL, NULL, "Empty map");

@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 07:21:46 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/23 20:29:36 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:17:43 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,14 @@
 
 mlx_image_t	*load_img(t_game *game, char *img_addr)
 {
-	mlx_texture_t	*texture;
-	mlx_image_t		*image;
-
-	texture = mlx_load_png(img_addr);
-	if (!texture)
+	game->texture = mlx_load_png(img_addr);
+	if (!game->texture)
 		return (0);
-	image = mlx_texture_to_image(game->mlx, texture);
-	if (!image)
+	game->image = mlx_texture_to_image(game->mlx, game->texture);
+	mlx_delete_texture(game->texture);
+	if (!game->image)
 		return (0);
-	mlx_delete_texture(texture);
-	return (image);
+	return (game->image);
 }
 
 int	load_rscs(t_game *game)

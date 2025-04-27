@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 07:22:49 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/23 20:14:23 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/26 09:55:13 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ void	end_game(t_game *game)
 		mlx_close_window(game->mlx);
 		mlx_terminate(game->mlx);
 	}
-	if (game->fd > 0)
-		ft_printf("Game closed\n");
+	ft_printf("Game closed\n");
 	exit(0);
 }
 
