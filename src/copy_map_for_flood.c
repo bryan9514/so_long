@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 19:27:05 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/27 12:08:15 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/30 13:59:04 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	flood_fill(char **map, int x, int y)
 {
 	if (y < 0 || x < 0 || map[y] == NULL || map[y][x] == '\0')
 		return ;
-	if (map[y][x] == '1' || map[y][x] == 'F' )
+	if (map[y][x] == '1' || map[y][x] == 'F')
 		return ;
 	map[y][x] = 'F';
 	flood_fill(map, x + 1, y);

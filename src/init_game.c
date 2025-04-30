@@ -6,19 +6,16 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 10:01:43 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/25 18:17:26 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:24:25 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-int	init_game(char **map, t_game *game)
+int	init_game(t_game *game)
 {
-	game->moves = 0;
-	game->collected = 0;
-	game->coins = count_collec(map);
-	window_size(game, map);
-	game->map = map;
+	game->coins = count_collec(game);
+	window_size(game);
 	if (!init_window(game))
 		return (0);
 	if (!load_rscs(game))

@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 11:42:43 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/26 10:04:44 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/30 13:58:40 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,17 @@
 
 void	change_cell(t_game *game, int new_x, int new_y)
 {
+	size_t i = 0;
+	while (i < game->img_collec->count)
+	{
+		if (game->img_collec->instances[i].x == new_x * TILE_SIZE
+			&& game->img_collec->instances[i].y == new_y * TILE_SIZE)
+		{
+			game->img_collec->instances[i].enabled = false;
+			break;
+		}
+		i++;
+	}
 	game->collected++;
 	game->map[new_y][new_x] = '0';
 }
@@ -22,7 +33,7 @@ int	verify_end(t_game *game, char dest)
 {
 	if (dest == 'E')
 	{
-		if (game->collected == game->coins)
+		if (game->collected == game->coins && dest == 'E')
 		{
 			ft_printf(GREEN"🎉 ¡YOU WIN IN %d MOVEMENTS!\n"RESET, game->moves);
 			end_game(game);
@@ -30,11 +41,12 @@ int	verify_end(t_game *game, char dest)
 		else
 		{
 			ft_printf(CYAN"🚪 THE DOOR IS CLOSED 🎃\n"RESET);
-			return (1);
 		}
 	}
 	return (0);
 }
+
+
 
 void	move_player(t_game *game, int dx, int dy)
 {
@@ -51,10 +63,8 @@ void	move_player(t_game *game, int dx, int dy)
 		change_cell(game, new_x, new_y);
 	if (verify_end(game, dest))
 		return ;
-	mlx_image_to_window(game->mlx, game->img_floor, game->player_x * \
-		TILE_SIZE, game->player_y * TILE_SIZE);
-	mlx_image_to_window(game->mlx, game->img_player, new_x * \
-		TILE_SIZE, new_y * TILE_SIZE);
+	game->img_player->instances[0].x = new_x * TILE_SIZE;
+	game->img_player->instances[0].y = new_y * TILE_SIZE;
 	game->player_x = new_x;
 	game->player_y = new_y;
 	game->moves++;

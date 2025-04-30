@@ -6,24 +6,24 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:00:17 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/23 17:55:13 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:55:07 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-int	validate_size_lines_map(char **map)
+int	validate_size_lines_map(t_game *game)
 {
 	int		i;
 	size_t	line_refe;
 
-	if (!map || !map[0])
+	if (!game->map || !game->map[0])
 		return (0);
 	i = 1;
-	line_refe = ft_strlen(map[0]);
-	while (map[i])
+	line_refe = ft_strlen(game->map[0]);
+	while (game->map[i])
 	{
-		if (ft_strlen(map[i]) != line_refe)
+		if (ft_strlen(game->map[i]) != line_refe)
 			return (0);
 		i++;
 	}

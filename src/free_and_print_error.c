@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 11:47:01 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/27 10:11:59 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:57:13 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,11 @@ void	free_map(char **map)
 	map = NULL;
 }
 
-void	free_list2(t_list *list, char *msj)
+void	free_list2(t_list *list,char *line, char *msj)
 {
 	t_list	*tmp;
 
+	get_next_line(-1);
 	while (list)
 	{
 		tmp = list->next;
@@ -49,6 +50,8 @@ void	free_list2(t_list *list, char *msj)
 		free(list);
 		list = tmp;
 	}
+	if (line)
+		free(line);
 	if (msj)
 	{
 		ft_putstr_fd(RED, 2);

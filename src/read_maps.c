@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 09:19:38 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/27 10:09:14 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:57:08 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,12 @@ t_list	*read_lines_into_list(int fd)
 	while (line)
 	{
 		clean_line = ft_strtrim(line, "\r\n");
-		free(line);
 		if (!clean_line)
-			free_list2(lines, "ft_strtrim failed");
+			free_list2(lines, line, "ft_strtrim failed");
+		free(line);
 		new_node = ft_lstnew(clean_line);
 		if (!new_node)
-			free_list2(lines, "ft_lstnew failed");
+			free_list2(lines, clean_line, "ft_lstnew failed");
 		ft_lstadd_back(&lines, new_node);
 		line = get_next_line(fd);
 	}
@@ -47,46 +47,45 @@ t_list	*read_lines_into_list(int fd)
 	return (lines);
 }
 
-char	**convert_list_to_array(t_list *lines)
+
+char	**convert_list_to_array(t_list *lines, t_game *game)
 {
 	int		i;
 	int		map_size;
-	char	**map;
 	t_list	*tmp;
 
 	map_size = ft_lstsize(lines);
-	map = malloc(sizeof(char *) * (map_size + 1));
-	if (!map)
-		free_list2(lines, "Failed malloc");
+	game->map = malloc(sizeof(char *) * (map_size + 1));
+	if (!game->map)
+		free_list2(lines, NULL, "Failed malloc");
 	tmp = lines;
 	i = 0;
 	while (tmp)
 	{
-		map[i++] = tmp->content;
+		game->map[i++] = tmp->content;
 		tmp = tmp->next;
 	}
-	map[i] = NULL;
+	game->map[i] = NULL;
 	free_list(lines);
-	return (map);
+	return (game->map);
 }
 
-int	validate_map_not_empty(char **map)
+int	validate_map_not_empty(t_game *game)
 {
-	if (!map || !map[0] || map[0][0] == '\0')
+	if (!game->map || !game->map[0] || game->map[0][0] == '\0')
 		return (0);
 	return (1);
 }
 
-char	**read_map(char *av)
+char	**read_map(char *av, t_game *game)
 {
 	int		fd;
 	t_list	*lines;
-	char	**map;
 
 	fd = open_map_file(av);
 	lines = read_lines_into_list(fd);
-	map = convert_list_to_array(lines);
-	if (!validate_map_not_empty(map))
-		free_map_print_error(map, NULL, NULL, "Empty map");
-	return (map);
+	convert_list_to_array(lines, game);
+	if (!validate_map_not_empty(game))
+		free_map_print_error(game->map, NULL, NULL, "Empty map");
+	return (game->map);
 }

@@ -6,7 +6,7 @@
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:55:14 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/26 09:31:17 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:56:07 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,16 @@ void	init_game_struct(t_game *game)
 
 int	main(int ac, char **av)
 {
-	char	**map;
 	t_game	game;
 
 	init_game_struct(&game);
 	check_args(ac, av);
-	map = read_map(av[1]);
-	if (!validate_size_lines_map(map))
-		free_map_print_error(map, NULL, NULL, \
+	read_map(av[1], &game);
+	if (!validate_size_lines_map(&game))
+		free_map_print_error(game.map, NULL, NULL, \
 			"Error : Invalid size map");
-	validate_elements_map(map);
-	if (!init_game(map, &game))
+	validate_elements_map(game.map);
+	if (!init_game(&game))
 	{
 		end_game(&game);
 		free_map_print_error(NULL, NULL, NULL, \

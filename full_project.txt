@@ -12,7 +12,7 @@
 
 NAME		:= so_long
 CC			:= cc
-CFLAGS		:= -Wall -Wextra -Werror -g
+CFLAGS		:= -Wall -Wextra -Werror 
 
 SRC_DIR		:= src
 OBJ_DIR		:= obj
@@ -69,52 +69,307 @@ re: fclean all
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_game_utils.c                                  :+:      :+:    :+:   */
+/*   read_maps.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/20 21:07:26 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/22 17:13:48 by brturcio         ###   ########.fr       */
+/*   Created: 2025/04/15 09:19:38 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/27 19:57:08 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void	window_size(t_game *game, char **map)
+int	open_map_file(char *filename)
 {
-	int	lin;
-	int	col;
+	int	fd;
 
-	lin = 0;
-	col = ft_strlen(map[0]);
-	while (map[lin])
-		lin++;
-	game->width = (col * TILE_SIZE);
-	game->height = (lin * TILE_SIZE);
-	game->map_rows = lin;
-	game->map_cols = col;
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		free_map_print_error(NULL, NULL, NULL, "File does not exist");
+	return (fd);
 }
 
-int	count_collec(char **map)
+t_list	*read_lines_into_list(int fd)
 {
-	int	count;
-	int	y;
-	int	x;
+	t_list	*lines;
+	t_list	*new_node;
+	char	*line;
+	char	*clean_line;
 
-	y = 0;
-	count = 0;
-	while (map[y])
+	lines = NULL;
+	line = get_next_line(fd);
+	while (line)
 	{
-		x = 0;
-		while (map[y][x])
-		{
-			if (map[y][x] == 'C')
-				count++;
-			x++;
-		}
-		y++;
+		clean_line = ft_strtrim(line, "\r\n");
+		if (!clean_line)
+			free_list2(lines, line, "ft_strtrim failed");
+		free(line);
+		new_node = ft_lstnew(clean_line);
+		if (!new_node)
+			free_list2(lines, clean_line, "ft_lstnew failed");
+		ft_lstadd_back(&lines, new_node);
+		line = get_next_line(fd);
 	}
-	return (count);
+	close(fd);
+	return (lines);
+}
+
+
+char	**convert_list_to_array(t_list *lines, t_game *game)
+{
+	int		i;
+	int		map_size;
+	t_list	*tmp;
+
+	map_size = ft_lstsize(lines);
+	game->map = malloc(sizeof(char *) * (map_size + 1));
+	if (!game->map)
+		free_list2(lines, NULL, "Failed malloc");
+	tmp = lines;
+	i = 0;
+	while (tmp)
+	{
+		game->map[i++] = tmp->content;
+		tmp = tmp->next;
+	}
+	game->map[i] = NULL;
+	free_list(lines);
+	return (game->map);
+}
+
+int	validate_map_not_empty(t_game *game)
+{
+	if (!game->map || !game->map[0] || game->map[0][0] == '\0')
+		return (0);
+	return (1);
+}
+
+char	**read_map(char *av, t_game *game)
+{
+	int		fd;
+	t_list	*lines;
+
+	fd = open_map_file(av);
+	lines = read_lines_into_list(fd);
+	convert_list_to_array(lines, game);
+	if (!validate_map_not_empty(game))
+		free_map_print_error(game->map, NULL, NULL, "Empty map");
+	return (game->map);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_game.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/20 10:01:43 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/27 19:24:25 by brturcio         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "so_long.h"
+
+int	init_game(t_game *game)
+{
+	game->coins = count_collec(game);
+	window_size(game);
+	if (!init_window(game))
+		return (0);
+	if (!load_rscs(game))
+		return (0);
+	render_map(game);
+	search_player(game);
+	mlx_key_hook(game->mlx, my_keyhook, game);
+	mlx_loop(game->mlx);
+	return (1);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   key_movement.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/21 11:42:43 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/27 21:05:45 by brturcio         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "so_long.h"
+
+void	change_cell(t_game *game, int new_x, int new_y)
+{
+	size_t i = 0;
+while (i < game->img_collec->count)
+{
+	if (game->img_collec->instances[i].x == new_x * TILE_SIZE
+		&& game->img_collec->instances[i].y == new_y * TILE_SIZE)
+	{
+		game->img_collec->instances[i].enabled = false; // Desactiva esa instancia
+		break;
+	}
+	i++;
+}
+	game->collected++;
+	// game->map[new_y][new_x] = '0';
+	// mlx_image_to_window(game->mlx, game->img_floor, new_x * TILE_SIZE, new_y * TILE_SIZE);
+}
+
+int	verify_end(t_game *game, char dest)
+{
+	if (dest == 'E')
+	{
+		if (game->collected == game->coins)
+		{
+			ft_printf(GREEN"🎉 ¡YOU WIN IN %d MOVEMENTS!\n"RESET, game->moves);
+			end_game(game);
+		}
+		else
+		{
+			ft_printf(CYAN"🚪 THE DOOR IS CLOSED 🎃\n"RESET);
+			return (1);
+		}
+	}
+	return (0);
+}
+
+
+
+void	move_player(t_game *game, int dx, int dy)
+{
+	int		new_y;
+	int		new_x;
+	char	dest;
+
+	new_y = game->player_y + dy;
+	new_x = game->player_x + dx;
+	dest = game->map[new_y][new_x];
+	if (dest == '1')
+		return ;
+	if (dest == 'C')
+		change_cell(game, new_x, new_y);
+	if (verify_end(game, dest))
+		return ;
+	game->img_player->instances[0].x = new_x * TILE_SIZE;
+	game->img_player->instances[0].y = new_y * TILE_SIZE;
+	game->player_x = new_x;
+	game->player_y = new_y;
+	game->moves++;
+	ft_printf(CYAN"movements : %d\n"RESET, game->moves);
+}
+
+void	my_keyhook(mlx_key_data_t keydata, void *param)
+{
+	t_game	*game;
+
+	game = (t_game *)param;
+	if (keydata.action != MLX_PRESS)
+		return ;
+	if (keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_UP)
+		move_player(game, 0, -1);
+	else if (keydata.key == MLX_KEY_S || keydata.key == MLX_KEY_DOWN)
+		move_player(game, 0, 1);
+	else if (keydata.key == MLX_KEY_A || keydata.key == MLX_KEY_LEFT)
+		move_player(game, -1, 0);
+	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_RIGHT)
+		move_player(game, 1, 0);
+	else if (keydata.key == MLX_KEY_ESCAPE)
+		end_game(game);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   load_rscs.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/21 07:21:46 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/25 18:17:43 by brturcio         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "so_long.h"
+
+mlx_image_t	*load_img(t_game *game, char *img_addr)
+{
+	game->texture = mlx_load_png(img_addr);
+	if (!game->texture)
+		return (0);
+	game->image = mlx_texture_to_image(game->mlx, game->texture);
+	mlx_delete_texture(game->texture);
+	if (!game->image)
+		return (0);
+	return (game->image);
+}
+
+int	load_rscs(t_game *game)
+{
+	game->img_wall = load_img(game, RSCS_WALL);
+	game->img_floor = load_img(game, RSCS_FLOOR);
+	game->img_player = load_img(game, RSCS_PLAYER);
+	game->img_door = load_img(game, RSCS_DOOR);
+	game->img_collec = load_img(game, RSCS_COLLEC);
+	if (!game->img_wall || !game->img_floor || !game->img_player || \
+		!game->img_door || !game->img_collec)
+		return (0);
+	return (1);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/03 15:55:14 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/27 19:56:07 by brturcio         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "so_long.h"
+
+void	init_game_struct(t_game *game)
+{
+	game->mlx = NULL;
+	game->map = NULL;
+	game->width = 0;
+	game->height = 0;
+	game->map_rows = 0;
+	game->map_cols = 0;
+	game->player_x = 0;
+	game->player_y = 0;
+	game->coins = 0;
+	game->collected = 0;
+	game->moves = 0;
+	game->img_wall = NULL;
+	game->img_floor = NULL;
+	game->img_player = NULL;
+	game->img_door = NULL;
+	game->img_collec = NULL;
+	game->texture = NULL;
+	game->image = NULL;
+}
+
+int	main(int ac, char **av)
+{
+	t_game	game;
+
+	init_game_struct(&game);
+	check_args(ac, av);
+	read_map(av[1], &game);
+	if (!validate_size_lines_map(&game))
+		free_map_print_error(game.map, NULL, NULL, \
+			"Error : Invalid size map");
+	validate_elements_map(game.map);
+	if (!init_game(&game))
+	{
+		end_game(&game);
+		free_map_print_error(NULL, NULL, NULL, \
+			"Error: Failed to initialize");
+	}
+	return (0);
 }
 /* ************************************************************************** */
 /*                                                                            */
@@ -124,24 +379,36 @@ int	count_collec(char **map)
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 07:21:57 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/26 10:04:29 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 21:03:12 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
+// void	render_map2(t_game *game, char cel, int x, int y)
+// {
+// 	mlx_image_to_window(game->mlx, game->img_floor, x, y);
+// 	if (cel == '1')
+// 		mlx_image_to_window(game->mlx, game->img_wall, x, y);
+// 	else if (cel == 'P')
+// 		mlx_image_to_window(game->mlx, game->img_player, x, y);
+// 	else if (cel == 'E')
+// 		mlx_image_to_window(game->mlx, game->img_door, x, y);
+// 	else if (cel == 'C')
+// 		mlx_image_to_window(game->mlx, game->img_collec, x, y);
+// }
 void	render_map2(t_game *game, char cel, int x, int y)
 {
-	mlx_image_to_window(game->mlx, game->img_floor, x, y);
+	mlx_image_to_window(game->mlx, game->img_floor, x, y); // Suelo siempre
+
 	if (cel == '1')
 		mlx_image_to_window(game->mlx, game->img_wall, x, y);
-	else if (cel == 'P')
-		mlx_image_to_window(game->mlx, game->img_player, x, y);
 	else if (cel == 'E')
 		mlx_image_to_window(game->mlx, game->img_door, x, y);
 	else if (cel == 'C')
-		mlx_image_to_window(game->mlx, game->img_collec, x, y);
+		mlx_image_to_window(game->mlx, game->img_collec, x, y); // Se crean instancias
 }
+
 
 void	render_map(t_game *game)
 {
@@ -184,6 +451,9 @@ void	search_player(t_game *game)
 			{
 				game->player_y = y;
 				game->player_x = x;
+				// Dibuja el jugador solo una vez
+				mlx_image_to_window(game->mlx, game->img_player, \
+				game->player_x * TILE_SIZE, game->player_y * TILE_SIZE);
 				return ;
 			}
 			x++;
@@ -199,7 +469,7 @@ void	search_player(t_game *game)
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 19:27:05 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/26 09:30:10 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 12:08:15 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +508,7 @@ void	flood_fill(char **map, int x, int y)
 {
 	if (y < 0 || x < 0 || map[y] == NULL || map[y][x] == '\0')
 		return ;
-	if (map[y][x] == '1' || map[y][x] == 'F' || map[y][x] == 'E')
+	if (map[y][x] == '1' || map[y][x] == 'F' )
 		return ;
 	map[y][x] = 'F';
 	flood_fill(map, x + 1, y);
@@ -304,7 +574,7 @@ int	verify_path(char **map)
 	if (!map_copy)
 		free_map_print_error(map, NULL, NULL, "copy_map failed");
 	flood_fill(map_copy, player_x, player_y);
-	if (has_remainig(map_copy, 'C'))
+	if (has_remainig(map_copy, 'C') || has_remainig(map_copy, 'E'))
 	{
 		free_map(map_copy);
 		return (0);
@@ -315,58 +585,86 @@ int	verify_path(char **map)
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   check_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/03 15:55:14 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/26 09:31:17 by brturcio         ###   ########.fr       */
+/*   Created: 2025/04/18 14:59:51 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/23 18:29:05 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void	init_game_struct(t_game *game)
+int	check_file_extension(char *filename)
 {
-	game->mlx = NULL;
-	game->map = NULL;
-	game->width = 0;
-	game->height = 0;
-	game->map_rows = 0;
-	game->map_cols = 0;
-	game->player_x = 0;
-	game->player_y = 0;
-	game->coins = 0;
-	game->collected = 0;
-	game->moves = 0;
-	game->img_wall = NULL;
-	game->img_floor = NULL;
-	game->img_player = NULL;
-	game->img_door = NULL;
-	game->img_collec = NULL;
-	game->texture = NULL;
-	game->image = NULL;
+	size_t		len;
+
+	len = ft_strlen(filename);
+	if (len < 4)
+		return (1);
+	return (ft_strncmp(filename + len - 4, ".ber", 4));
 }
 
-int	main(int ac, char **av)
+int	check_args(int ac, char **av)
 {
-	char	**map;
-	t_game	game;
+	if (ac != 2)
+		free_map_print_error(NULL, NULL, NULL, "Error : Syntax : \
+./so_long  map_name.ber");
+	if (check_file_extension(av[1]))
+		free_map_print_error(NULL, NULL, NULL, "Error : No valid \
+extension map");
+	return (1);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_game_utils.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/20 21:07:26 by brturcio          #+#    #+#             */
+/*   Updated: 2025/04/27 18:30:11 by brturcio         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-	init_game_struct(&game);
-	check_args(ac, av);
-	map = read_map(av[1]);
-	if (!validate_size_lines_map(map))
-		free_map_print_error(map, NULL, NULL, \
-			"Error : Invalid size map");
-	validate_elements_map(map);
-	if (!init_game(map, &game))
+#include "so_long.h"
+
+void	window_size(t_game *game)
+{
+	int	lin;
+	int	col;
+
+	lin = 0;
+	col = ft_strlen(game->map[0]);
+	while (game->map[lin])
+		lin++;
+	game->width = (col * TILE_SIZE);
+	game->height = (lin * TILE_SIZE);
+	game->map_rows = lin;
+	game->map_cols = col;
+}
+
+int	count_collec(t_game *game)
+{
+	int	count;
+	int	y;
+	int	x;
+
+	y = 0;
+	count = 0;
+	while (game->map[y])
 	{
-		end_game(&game);
-		free_map_print_error(NULL, NULL, NULL, \
-			"Error: Failed to initialize");
+		x = 0;
+		while (game->map[y][x])
+		{
+			if (game->map[y][x] == 'C')
+				count++;
+			x++;
+		}
+		y++;
 	}
-	return (0);
+	return (count);
 }
 /* ************************************************************************** */
 /*                                                                            */
@@ -376,24 +674,24 @@ int	main(int ac, char **av)
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:00:17 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/23 17:55:13 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:55:07 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-int	validate_size_lines_map(char **map)
+int	validate_size_lines_map(t_game *game)
 {
 	int		i;
 	size_t	line_refe;
 
-	if (!map || !map[0])
+	if (!game->map || !game->map[0])
 		return (0);
 	i = 1;
-	line_refe = ft_strlen(map[0]);
-	while (map[i])
+	line_refe = ft_strlen(game->map[0]);
+	while (game->map[i])
 	{
-		if (ft_strlen(map[i]) != line_refe)
+		if (ft_strlen(game->map[i]) != line_refe)
 			return (0);
 		i++;
 	}
@@ -508,163 +806,6 @@ int	validate_elements_map(char **map)
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_game.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/20 10:01:43 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/25 18:17:26 by brturcio         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "so_long.h"
-
-int	init_game(char **map, t_game *game)
-{
-	game->moves = 0;
-	game->collected = 0;
-	game->coins = count_collec(map);
-	window_size(game, map);
-	game->map = map;
-	if (!init_window(game))
-		return (0);
-	if (!load_rscs(game))
-		return (0);
-	render_map(game);
-	search_player(game);
-	mlx_key_hook(game->mlx, my_keyhook, game);
-	mlx_loop(game->mlx);
-	return (1);
-}
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   read_maps.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/15 09:19:38 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/26 09:31:06 by brturcio         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "so_long.h"
-
-int	open_map_file(char *filename)
-{
-	int	fd;
-
-	fd = open(filename, O_RDONLY);
-	if (fd < 0)
-		free_map_print_error(NULL, NULL, NULL, "File does not exist");
-	return (fd);
-}
-
-t_list	*read_lines_into_list(int fd)
-{
-	t_list	*lines;
-	t_list	*new_node;
-	char	*line;
-	char	*clean_line;
-
-	lines = NULL;
-	line = get_next_line(fd);
-	while (line)
-	{
-		clean_line = ft_strtrim(line, "\r\n");
-		free(line);
-		if (!clean_line)
-			free_map_print_error(NULL, lines, NULL, "ft_strtrim failed");
-		new_node = ft_lstnew(clean_line);
-		if (!new_node)
-			free_map_print_error(NULL, lines, clean_line, "ft_lstnew failed");
-		ft_lstadd_back(&lines, new_node);
-		line = get_next_line(fd);
-	}
-	close(fd);
-	return (lines);
-}
-
-char	**convert_list_to_array(t_list *lines)
-{
-	int		i;
-	int		map_size;
-	char	**map;
-	t_list	*tmp;
-
-	map_size = ft_lstsize(lines);
-	map = malloc(sizeof(char *) * (map_size + 1));
-	if (!map)
-		free_map_print_error(NULL, NULL, NULL, "Failed malloc");
-	tmp = lines;
-	i = 0;
-	while (tmp)
-	{
-		map[i++] = tmp->content;
-		tmp = tmp->next;
-	}
-	map[i] = NULL;
-	free_list(lines);
-	return (map);
-}
-
-int	validate_map_not_empty(char **map)
-{
-	if (!map || !map[0] || map[0][0] == '\0')
-		return (0);
-	return (1);
-}
-
-char	**read_map(char *av)
-{
-	int		fd;
-	t_list	*lines;
-	char	**map;
-
-	fd = open_map_file(av);
-	lines = read_lines_into_list(fd);
-	map = convert_list_to_array(lines);
-	if (!validate_map_not_empty(map))
-		free_map_print_error(map, NULL, NULL, "Empty map");
-	return (map);
-}
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   check_args.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/18 14:59:51 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/23 18:29:05 by brturcio         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "so_long.h"
-
-int	check_file_extension(char *filename)
-{
-	size_t		len;
-
-	len = ft_strlen(filename);
-	if (len < 4)
-		return (1);
-	return (ft_strncmp(filename + len - 4, ".ber", 4));
-}
-
-int	check_args(int ac, char **av)
-{
-	if (ac != 2)
-		free_map_print_error(NULL, NULL, NULL, "Error : Syntax : \
-./so_long  map_name.ber");
-	if (check_file_extension(av[1]))
-		free_map_print_error(NULL, NULL, NULL, "Error : No valid \
-extension map");
-	return (1);
-}
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
 /*   init_window.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
@@ -710,131 +851,12 @@ int	init_window(t_game *game)
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   key_movement.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/21 11:42:43 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/26 10:04:44 by brturcio         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "so_long.h"
-
-void	change_cell(t_game *game, int new_x, int new_y)
-{
-	game->collected++;
-	game->map[new_y][new_x] = '0';
-}
-
-int	verify_end(t_game *game, char dest)
-{
-	if (dest == 'E')
-	{
-		if (game->collected == game->coins)
-		{
-			ft_printf(GREEN"🎉 ¡YOU WIN IN %d MOVEMENTS!\n"RESET, game->moves);
-			end_game(game);
-		}
-		else
-		{
-			ft_printf(CYAN"🚪 THE DOOR IS CLOSED 🎃\n"RESET);
-			return (1);
-		}
-	}
-	return (0);
-}
-
-void	move_player(t_game *game, int dx, int dy)
-{
-	int		new_y;
-	int		new_x;
-	char	dest;
-
-	new_y = game->player_y + dy;
-	new_x = game->player_x + dx;
-	dest = game->map[new_y][new_x];
-	if (dest == '1')
-		return ;
-	if (dest == 'C')
-		change_cell(game, new_x, new_y);
-	if (verify_end(game, dest))
-		return ;
-	mlx_image_to_window(game->mlx, game->img_floor, game->player_x * \
-		TILE_SIZE, game->player_y * TILE_SIZE);
-	mlx_image_to_window(game->mlx, game->img_player, new_x * \
-		TILE_SIZE, new_y * TILE_SIZE);
-	game->player_x = new_x;
-	game->player_y = new_y;
-	game->moves++;
-	ft_printf(CYAN"movements : %d\n"RESET, game->moves);
-}
-
-void	my_keyhook(mlx_key_data_t keydata, void *param)
-{
-	t_game	*game;
-
-	game = (t_game *)param;
-	if (keydata.action != MLX_PRESS)
-		return ;
-	if (keydata.key == MLX_KEY_W || keydata.key == MLX_KEY_UP)
-		move_player(game, 0, -1);
-	else if (keydata.key == MLX_KEY_S || keydata.key == MLX_KEY_DOWN)
-		move_player(game, 0, 1);
-	else if (keydata.key == MLX_KEY_A || keydata.key == MLX_KEY_LEFT)
-		move_player(game, -1, 0);
-	else if (keydata.key == MLX_KEY_D || keydata.key == MLX_KEY_RIGHT)
-		move_player(game, 1, 0);
-	else if (keydata.key == MLX_KEY_ESCAPE)
-		end_game(game);
-}
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   load_rscs.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/21 07:21:46 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/25 18:17:43 by brturcio         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "so_long.h"
-
-mlx_image_t	*load_img(t_game *game, char *img_addr)
-{
-	game->texture = mlx_load_png(img_addr);
-	if (!game->texture)
-		return (0);
-	game->image = mlx_texture_to_image(game->mlx, game->texture);
-	mlx_delete_texture(game->texture);
-	if (!game->image)
-		return (0);
-	return (game->image);
-}
-
-int	load_rscs(t_game *game)
-{
-	game->img_wall = load_img(game, RSCS_WALL);
-	game->img_floor = load_img(game, RSCS_FLOOR);
-	game->img_player = load_img(game, RSCS_PLAYER);
-	game->img_door = load_img(game, RSCS_DOOR);
-	game->img_collec = load_img(game, RSCS_COLLEC);
-	if (!game->img_wall || !game->img_floor || !game->img_player || \
-		!game->img_door || !game->img_collec)
-		return (0);
-	return (1);
-}
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
 /*   free_and_print_error.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 11:47:01 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/25 17:38:56 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:57:13 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -864,6 +886,29 @@ void	free_map(char **map)
 	}
 	free(map);
 	map = NULL;
+}
+
+void	free_list2(t_list *list,char *line, char *msj)
+{
+	t_list	*tmp;
+
+	get_next_line(-1);
+	while (list)
+	{
+		tmp = list->next;
+		free(list->content);
+		free(list);
+		list = tmp;
+	}
+	if (line)
+		free(line);
+	if (msj)
+	{
+		ft_putstr_fd(RED, 2);
+		ft_putstr_fd(msj, 2);
+		ft_putstr_fd(RESET"\n", 2);
+	}
+	exit(1);
 }
 
 void	free_image(t_game *game)
@@ -904,7 +949,7 @@ void	free_map_print_error(char **map, t_list *lines, char *line, char *msj)
 /*   By: brturcio <brturcio@student.42angouleme.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:56:11 by brturcio          #+#    #+#             */
-/*   Updated: 2025/04/26 09:31:31 by brturcio         ###   ########.fr       */
+/*   Updated: 2025/04/27 20:53:10 by brturcio         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -956,8 +1001,8 @@ typedef struct s_game
 	mlx_image_t		*img_player;
 	mlx_image_t		*img_door;
 	mlx_image_t		*img_collec;
-	mlx_texture_t	*texture;
 	mlx_image_t		*image;
+	mlx_texture_t	*texture;
 
 }	t_game;
 
@@ -975,16 +1020,17 @@ int				verify_path(char **map);
 //free.c
 void			free_list(t_list *lines);
 void			free_map(char **map);
+void			free_list2(t_list *list,char *line, char *msj);
 void			free_map_print_error(char **map, t_list *lines, char *line, \
 				char *msj);
 void			free_image(t_game *game);
 
 //init_game_utils.c
-void			window_size(t_game *game, char **map);
-int				count_collec(char **map);
+void			window_size(t_game *game);
+int				count_collec(t_game *game);
 
 //init_game
-int				init_game(char **map, t_game *game);
+int				init_game(t_game *game);
 
 //init_window
 void			close_hook(void *param);
@@ -1002,7 +1048,7 @@ int				load_rscs(t_game *game);
 mlx_image_t		*load_img(t_game *game, char *img_addr);
 
 //map_validation.c
-int				validate_size_lines_map(char **map);
+int				validate_size_lines_map(t_game *game);
 int				validate_wall_map(char **map);
 int				check_valid_chars(char **map);
 void			check_required_elements(char **map, int *c, int *p, int *e);
@@ -1011,9 +1057,9 @@ int				validate_elements_map(char **map);
 //read_map.c
 int				open_map_file(char *filename);
 t_list			*read_lines_into_list(int fd);
-char			**convert_list_to_array(t_list *lines);
-int				validate_map_not_empty(char **map);
-char			**read_map(char *av);
+char			**convert_list_to_array(t_list *lines, t_game *game);
+int				validate_map_not_empty(t_game *game);
+char			**read_map(char *av, t_game *game);
 
 //render_map.c
 void			render_map2(t_game *game, char cel, int x, int y);
